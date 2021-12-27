@@ -42,7 +42,18 @@ export default class Activity extends Vue {
   }
 
   get logMsg(): string {
-    return `<b>${this.activity.initiator}</b> ${this.activity.action}`;
+    switch (this.activity.action_type) {
+      case "Add":
+      case "Start":
+      case "Update":
+        return `<b>${this.activity.initiator}</b> ${this.activity.action}`;
+      case "Request":
+        return `<b>${this.activity.initiator}</b> requested <b>${this.activity.requested_user}</b> to join mission as <b>${this.activity.role}</b>`;
+      case "Join":
+        return `<b>${this.activity.initiator}</b> joined mission as <b>${this.activity.role}</b>`;
+      default:
+        return "";
+    }
   }
 
   get logDate(): string {

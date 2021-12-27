@@ -6,4 +6,6 @@ export interface IActivity {
   action_type: ActionType;
   action: string;
   timestamp: Date;
+  requested_user?: string;
+  role?: string;
 }

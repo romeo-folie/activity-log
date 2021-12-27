@@ -35,6 +35,7 @@ export default class ActivityList extends Vue {
       action_type: "Join",
       action: "joined mission as Mission Executive",
       timestamp: this.randomDate(),
+      role: "Mission Executive",
     },
     {
       id: 3,
@@ -43,12 +44,28 @@ export default class ActivityList extends Vue {
       action: "started scope development",
       timestamp: this.randomDate(),
     },
+    {
+      id: 4,
+      initiator: "Jane Doe",
+      action_type: "Request",
+      action: "requested Laud Inkoom to join mission as Mission Executive",
+      timestamp: this.randomDate(),
+      requested_user: "Laud Inkoom",
+      role: "Mission Executive",
+    },
+    {
+      id: 5,
+      initiator: "Rasheeda Seshie",
+      action_type: "Update",
+      action: "updated mission scope",
+      timestamp: this.randomDate(),
+    },
   ];
 
   mounted(): void {
     if (window.sessionStorage.getItem("activities")) {
       this.activities = JSON.parse(
-        window.sessionStorage.getItem("activities") || ""
+        window.sessionStorage.getItem("activities") as string
       );
     }
   }
@@ -82,7 +99,7 @@ export default class ActivityList extends Vue {
     );
   }
 
-  @Watch("activities")
+  @Watch("activities", { deep: true })
   onActivityChange(): void {
     window.sessionStorage.setItem(
       "activities",
