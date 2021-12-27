@@ -1,40 +1,56 @@
 <template>
   <div class="activity">
     <div class="tl">
-      <div class="icon-wrap" :class="{ new: addAction }">
-        <img :src="require('../assets/icons/' + icon)" alt="icon" />
+      <div class="icon-wrap" :class="{ new: isAddAction }">
+        <img :src="require('../assets/icons/' + icon + '.svg')" :alt="icon" />
       </div>
       <div class="vertical-line"></div>
     </div>
     <div class="text">
-      <span class="action">Abigail Owusu added lead</span>
-      <span class="time-past">14 days ago</span>
+      <span class="action" v-html="logMsg"></span>
+      <span class="time-past">{{ logDate }}</span>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { IActivity } from "@/types";
+import { Component, Prop, Vue } from "vue-property-decorator";
+import moment from "moment";
 
 @Component({
   name: "Activity",
 })
 export default class Activity extends Vue {
-  private iconSrc = "user-check.svg";
+  @Prop({ default: () => ({}) }) private activity!: IActivity;
 
-  // write a switch case in here and use the action to determine which action is displayed
   get icon(): string {
-    return this.iconSrc;
+    switch (this.activity.action_type) {
+      case "Add":
+        return "plus";
+      case "Request":
+        return "user-check";
+      case "Join":
+        return "user";
+      case "Start":
+        return "play";
+      case "Update":
+        return "edit";
+      default:
+        return "";
+    }
   }
 
-  // another switch here to generate the right message using all the info from model based on action
   get logMsg(): string {
-    return "";
+    return `<b>${this.activity.initiator}</b> ${this.activity.action}`;
   }
 
-  // getter for whether or not action is an addition
-  get addAction(): boolean {
-    return false;
+  get logDate(): string {
+    return moment(this.activity.timestamp).fromNow();
+  }
+
+  get isAddAction(): boolean {
+    return this.activity.action_type === "Add";
   }
 }
 </script>

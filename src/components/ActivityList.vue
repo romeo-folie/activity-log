@@ -1,13 +1,17 @@
 <template>
   <div class="activities">
-    <Activity />
-    <Activity />
+    <Activity
+      v-for="activity in sortedActivities"
+      :activity="activity"
+      :key="activity.id"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import Activity from "@/components/Activity.vue";
+import { IActivity } from "@/types";
 
 @Component({
   name: "ActivityList",
@@ -16,7 +20,75 @@ import Activity from "@/components/Activity.vue";
   },
 })
 export default class ActivityList extends Vue {
-  @Prop({ default: () => [] }) private activities!: Array<unknown>;
+  //initial activity data here
+  activities: Array<IActivity> = [
+    {
+      id: 1,
+      initiator: "John Doe",
+      action_type: "Add",
+      action: "added lead",
+      timestamp: this.randomDate(),
+    },
+    {
+      id: 2,
+      initiator: "Abigail Owusu Ansah",
+      action_type: "Join",
+      action: "joined mission as Mission Executive",
+      timestamp: this.randomDate(),
+    },
+    {
+      id: 3,
+      initiator: "Josephine Ampah",
+      action_type: "Start",
+      action: "started scope development",
+      timestamp: this.randomDate(),
+    },
+  ];
+
+  mounted(): void {
+    if (window.sessionStorage.getItem("activities")) {
+      this.activities = JSON.parse(
+        window.sessionStorage.getItem("activities") || ""
+      );
+    }
+  }
+
+  // get all activities
+  all(): Array<IActivity> {
+    return this.activities;
+  }
+
+  // get single activity by id
+  get(id: number): IActivity | undefined {
+    return this.activities.find((act) => act.id === id);
+  }
+
+  // add new activity to list of activities
+  add(activity: IActivity): void {
+    const last = this.activities.pop();
+    const newAct = { ...activity, id: last ? last.id + 1 : 1 };
+    this.activities.push(newAct);
+  }
+
+  randomDate(start = new Date(2021, 11, 1), end = new Date()): Date {
+    return new Date(
+      start.getTime() + Math.random() * (end.getTime() - start.getTime())
+    );
+  }
+
+  get sortedActivities(): Array<IActivity> {
+    return this.activities.sort(
+      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+    );
+  }
+
+  @Watch("activities")
+  onActivityChange(): void {
+    window.sessionStorage.setItem(
+      "activities",
+      JSON.stringify(this.activities)
+    );
+  }
 }
 </script>
 

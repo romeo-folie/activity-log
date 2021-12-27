@@ -1,12 +1,7 @@
-export enum ActionType {
-  Add = "Add",
-  Request = "Request",
-  Join = "Join",
-  Start = "Start",
-  Update = "Update",
-}
+type ActionType = "Add" | "Request" | "Join" | "Start" | "Update";
 
 export interface IActivity {
+  id: number;
   initiator: string;
   action_type: ActionType;
   action: string;
