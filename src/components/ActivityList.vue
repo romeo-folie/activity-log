@@ -9,9 +9,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import {Component, Vue, Watch} from "vue-property-decorator";
 import Activity from "@/components/Activity.vue";
-import { IActivity } from "@/types";
+import {IActivity} from "@/types";
 
 @Component({
   name: "ActivityList",
@@ -83,7 +83,7 @@ export default class ActivityList extends Vue {
   // add new activity to list of activities
   add(activity: IActivity): void {
     const last = this.activities.pop();
-    const newAct = { ...activity, id: last ? last.id + 1 : 1 };
+    const newAct = {...activity, id: last ? last.id + 1 : 1};
     this.activities.push(newAct);
   }
 
@@ -95,11 +95,12 @@ export default class ActivityList extends Vue {
 
   get sortedActivities(): Array<IActivity> {
     return this.activities.sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+      (a: IActivity, b: IActivity) =>
+        +new Date(a.timestamp) - +new Date(b.timestamp)
     );
   }
 
-  @Watch("activities", { deep: true })
+  @Watch("activities", {deep: true})
   onActivityChange(): void {
     window.sessionStorage.setItem(
       "activities",
